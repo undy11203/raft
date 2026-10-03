@@ -1,0 +1,26 @@
+{
+    // CMake Tools берёт настройки из CMakePresets.json (Debug/Release, MinGW + Ninja)
+    "cmake.useCMakePresets": "always",
+    "cmake.configureOnOpen": true,
+
+    // Запуск из статус-бара CMake Tools: рабочая папка = папка с exe,
+    // в PATH — MinGW, чтобы находились libstdc++ и прочие рантайм-DLL
+    "cmake.debugConfig": {
+        "cwd": "${command:cmake.launchTargetDirectory}",
+        "environment": [
+            { "name": "PATH", "value": "C:/msys64/mingw64/bin;${env:PATH}" }
+        ]
+    },
+
+    // IntelliSense берёт include-пути (в т.ч. Boost из build/<preset>/_deps) прямо из CMake
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+
+    // Не индексировать служебное содержимое папки сборки в поиске/проводнике
+    "search.exclude": {
+        "build/**/CMakeFiles": true,
+        "build/**/_deps/*-subbuild": true
+    },
+    "files.watcherExclude": {
+        "build/**": true
+    }
+}

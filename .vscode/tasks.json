@@ -1,0 +1,34 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // Ctrl+Shift+B — только сборка через CMake Tools с текущим пресетом
+            "label": "Build",
+            "type": "cmake",
+            "command": "build",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            // Terminal → Run Task → "Build & Run": сборка, затем запуск без отладчика
+            "label": "Build & Run",
+            "type": "process",
+            "command": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "options": {
+                "cwd": "${command:cmake.launchTargetDirectory}",
+                "env": {
+                    "PATH": "C:/msys64/mingw64/bin;${env:PATH}"
+                }
+            },
+            "dependsOn": "Build",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

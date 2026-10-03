@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "name": "MinGW",
+
+            // 1) Основной способ: пути, дефайны и флаги берутся прямо из CMake
+            //    (то, что реально используется при сборке, включая Boost).
+            "configurationProvider": "ms-vscode.cmake-tools",
+
+            // 2) Запасной способ: compile_commands.json текущей Debug-сборки.
+            "compileCommands": "${workspaceFolder}/build/debug/compile_commands.json",
+
+            // 3) Если проект ещё не сконфигурирован: Boost в CMake-раскладке лежит как
+            //    build/<preset>/_deps/boost-src/libs/<lib>/include — "**" находит все.
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/build/debug/_deps/boost-src/libs/**"
+            ],
+            "defines": [
+                "_WIN32_WINNT=0x0A00",
+                "WIN32_LEAN_AND_MEAN",
+                "NOMINMAX"
+            ],
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
