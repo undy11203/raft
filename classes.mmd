@@ -1,0 +1,111 @@
+classDiagram
+  class AppendEntriesRequest {
+    entries : list[LogEntry]
+    leader_commit : int
+    leader_id : int
+    prev_log_index : int
+    prev_log_term : int
+    term : int
+  }
+  class AppendEntriesResponse {
+    success : bool
+    term : int
+  }
+  class Config {
+    data_dir : Path
+    election_timeout : tuple[float, float]
+    heartbeat_interval : float
+    host : str
+    log_level : str
+    node_id : int
+    peers : dict[int, str]
+    port : int
+    rpc_timeout : float
+  }
+  class HttpPeerClient {
+    peers : dict[int, str]
+    session : aiohttp.ClientSession | None
+    timeout : ClientTimeout
+    append_entries(peer_id: int, req: AppendEntriesRequest) AppendEntriesResponse | None
+    call(peer_id: int, path: str, req: Any, response: Callable[..., T]) T | None
+    close() None
+    request_vote(peer_id: int, req: RequestVoteRequest) RequestVoteResponse | None
+    start() None
+  }
+  class HttpServer {
+    host : str
+    node
+    port : int
+    runner : AppRunner
+    append_entries(request: web.Request) web.Response
+    read_message(request: web.Request, message: Callable[..., T]) T
+    request_vote(request: web.Request) web.Response
+    start() None
+    stop() None
+  }
+  class LogEntry {
+    command : str
+    term : int
+  }
+  class Node {
+    config
+    current_term : int
+    election_timer : asyncio.TimerHandle | None
+    heartbeat_timer : asyncio.TimerHandle | None
+    id : int
+    last_contact : dict[int, float]
+    leader_id : int | None
+    loop : AbstractEventLoop
+    peerClient
+    peers : dict[int, str]
+    role
+    storage
+    tasks : set[asyncio.Task[None]]
+    voted_for : int | None
+    votes : set[int]
+    become_candidate()
+    become_follower(term: int)
+    become_leader() None
+    cancel_election_timer() None
+    cancel_heartbeat_timer() None
+    check_majority() None
+    handle_append_entries(req: AppendEntriesRequest)
+    handle_request_vote(req: RequestVoteRequest)
+    handle_request_vote_response(peer_id: int, req: RequestVoteRequest, resp: RequestVoteResponse) None
+    on_election_timeout() None
+    on_task_done(task: asyncio.Task[None]) None
+    reset_election_timer()
+    send_append_entries(peer_id: int, req: AppendEntriesRequest) None
+    send_heartbeats() None
+    send_request_vote(peer_id: int, req: RequestVoteRequest) None
+    spawn(coro: Coroutine[Any, Any, None]) None
+    start() None
+    stop() None
+  }
+  class PersistentState {
+    current_term : int
+    voted_for : int | None
+  }
+  class RequestVoteRequest {
+    candidate_id : int
+    last_log_index : int
+    last_log_term : int
+    term : int
+  }
+  class RequestVoteResponse {
+    term : int
+    vote_granted : bool
+  }
+  class Role {
+    name
+  }
+  class Storage {
+    data_dir : Path
+    state_file : Path
+    load() PersistentState
+    save(state: PersistentState) None
+  }
+  Config --o Node : config
+  Node --o HttpServer : node
+  HttpPeerClient --o Node : peerClient
+  Storage --o Node : storage

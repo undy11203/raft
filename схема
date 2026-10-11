@@ -1,0 +1,10 @@
+                ┌──────────── __main__.py ────────────┐
+                │ argparse → Config, logging,          │
+                │ создаёт всё и запускает asyncio.run  │
+                └─────────────────┬────────────────────┘
+                                  │
+  другие узлы / curl              ▼
+  ── HTTP ──► server.py ──вызывает──► node.py ──использует──► storage.py (state.json)
+                                       │
+                                       └──отправляет RPC──► transport.py ── HTTP ──► другие узлы
+  messages.py — dataclass'ы запросов/ответов, их используют все

@@ -1,3 +1,5 @@
-build/
+.venv/
+__pycache__/
+*.pyc
+data/
 .idea/
-compile_commands.json

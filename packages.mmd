@@ -1,0 +1,29 @@
+classDiagram
+  class raft {
+  }
+  class __main__ {
+  }
+  class config {
+  }
+  class messages {
+  }
+  class node {
+  }
+  class peer_client {
+  }
+  class server {
+  }
+  class storage {
+  }
+  __main__ --> config
+  __main__ --> node
+  __main__ --> peer_client
+  __main__ --> server
+  __main__ --> storage
+  node --> config
+  node --> messages
+  node --> peer_client
+  node --> storage
+  peer_client --> messages
+  server --> messages
+  server --> node
