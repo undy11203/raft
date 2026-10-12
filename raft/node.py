@@ -9,7 +9,6 @@ from typing import Any, Coroutine
 from raft.config import Config
 from raft.messages import AppendEntriesRequest, AppendEntriesResponse, RequestVoteRequest, RequestVoteResponse, Status
 from raft.peer_client import HttpPeerClient
-from raft.storage import PersistentState, Storage
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +21,6 @@ class Node:
     config: Config
     id: int
     peers: dict[int, str]
-    storage: Storage
     peerClient: HttpPeerClient
     loop: asyncio.AbstractEventLoop
     current_term: int
@@ -34,11 +32,10 @@ class Node:
     heartbeat_timer: asyncio.TimerHandle | None
     tasks: set[asyncio.Task[None]]
 
-    def __init__(self, config: Config, storage: Storage, peerClient: HttpPeerClient) -> None:
+    def __init__(self, config: Config, peerClient: HttpPeerClient) -> None:
         self.config = config
         self.id = config.node_id
         self.peers = config.peers
-        self.storage = storage
         self.peerClient = peerClient
         self.loop = asyncio.get_running_loop()
 
@@ -55,9 +52,8 @@ class Node:
         self.tasks: set[asyncio.Task[None]] = set()
 
     def start(self) -> None:
-        state = self.storage.load()
-        self.current_term = state.current_term
-        self.voted_for = state.voted_for
+        self.current_term = 0
+        self.voted_for = None
         self.role = Role.FOLLOWER
         log.info("started as follower: term %d, voted_for %s, peers %s",
                  self.current_term, self.voted_for, sorted(self.peers))
@@ -85,7 +81,6 @@ class Node:
         can_vote = self.voted_for is None
         if can_vote:
             self.voted_for = req.candidate_id
-            self.storage.save(PersistentState(current_term=self.current_term, voted_for=self.voted_for))
             self.reset_election_timer()
             log.info("term %d: voted for %d", self.current_term, req.candidate_id)
             return RequestVoteResponse(term=self.current_term, vote_granted=True)
@@ -116,7 +111,6 @@ class Node:
             self.current_term = term
             self.voted_for = None
             self.leader_id = None 
-            self.storage.save(PersistentState(current_term=self.current_term, voted_for=self.voted_for))
         if self.role == Role.LEADER:
             self.cancel_heartbeat_timer()
             self.reset_election_timer()
@@ -130,7 +124,6 @@ class Node:
         self.role = Role.CANDIDATE
         self.current_term += 1
         self.voted_for = self.id
-        self.storage.save(PersistentState(current_term=self.current_term, voted_for=self.voted_for))
         self.votes = {self.id}
         log.debug("term %d: %s -> candidate, requesting votes from %s",
                   self.current_term, old_role, sorted(self.peers))

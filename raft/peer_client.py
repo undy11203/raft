@@ -33,7 +33,8 @@ class HttpPeerClient:
     async def append_entries(self, peer_id: int, req: AppendEntriesRequest) -> AppendEntriesResponse | None:
         return await self.call(peer_id, "/raft/append-entries", req, AppendEntriesResponse)
 
-    async def call[T](self, peer_id: int, path: str, req: Any, response: Callable[..., T]) -> T | None:
+    # async def call[T](self, peer_id: int, path: str, req: Any, response: Callable[..., T]) -> T | None:
+    async def call(self, peer_id: int, path: str, req: Any, response):
         assert self.session is not None
         url = f"http://{self.peers[peer_id]}{path}"
         try:

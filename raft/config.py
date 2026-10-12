@@ -11,7 +11,7 @@ class Config:
     data_dir: Path # путь до директории с журналами и всяким
     election_timeout: tuple[float, float] # диапозон когда стоит проводить выборы
     heartbeat_interval: float # heartbeat
-    rpc_timeout: float # end response time
+    rpc_timeout: float
     log_level: str = "INFO"
 
 def parse_args(argv: list[str] | None = None) -> Config:

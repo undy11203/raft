@@ -9,13 +9,12 @@ from raft.config import Config, parse_args
 from raft.node import Node
 from raft.peer_client import HttpPeerClient
 from raft.server import HttpServer
-from raft.storage import Storage
 
 log = logging.getLogger("raft")
 
 async def run(config: Config) -> int:
     peerClient = HttpPeerClient(config.peers, config.rpc_timeout)
-    node = Node(config, Storage(config.data_dir), peerClient)
+    node = Node(config, peerClient)
     server = HttpServer(node, config.host, config.port)
 
     await peerClient.start()
