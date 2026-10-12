@@ -7,7 +7,7 @@ import random
 from typing import Any, Coroutine
 
 from raft.config import Config
-from raft.messages import AppendEntriesRequest, AppendEntriesResponse, RequestVoteRequest, RequestVoteResponse
+from raft.messages import AppendEntriesRequest, AppendEntriesResponse, RequestVoteRequest, RequestVoteResponse, Status
 from raft.peer_client import HttpPeerClient
 from raft.storage import PersistentState, Storage
 
@@ -82,7 +82,7 @@ class Node:
         if (req.term > self.current_term):
             self.become_follower(req.term)        
 
-        can_vote = self.voted_for is None or self.voted_for == req.candidate_id
+        can_vote = self.voted_for is None
         if can_vote:
             self.voted_for = req.candidate_id
             self.storage.save(PersistentState(current_term=self.current_term, voted_for=self.voted_for))
@@ -206,8 +206,8 @@ class Node:
             log.debug("term %d: vote from %d denied", self.current_term, peer_id)
 
     def check_majority(self) -> None:
-        cluster_size = len(self.peers) + 1
-        if self.role == Role.CANDIDATE and len(self.votes) * 2 > cluster_size:
+        cluster_size = len(self.peers)
+        if self.role == Role.CANDIDATE and (len(self.votes) > cluster_size // 2):
             self.become_leader()
 
     def become_leader(self) -> None:
@@ -242,6 +242,9 @@ class Node:
             log.debug("term %d: higher term %d from %d, stepping down",
                       self.current_term, resp.term, peer_id)
             self.become_follower(resp.term)
+
+    def status(self):
+        return Status(term=self.current_term, leader_id=self.leader_id, role=self.role)
 
 
 

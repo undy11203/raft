@@ -44,7 +44,7 @@ def main() -> None:
     )
     # уровень только для наших логгеров raft.*, чтобы не включать отладку aiohttp и asyncio
     logging.getLogger("raft").setLevel(config.log_level)
-    logging.getLogger("raft").setLevel("DEBUG")
+    # logging.getLogger("raft").setLevel("DEBUG")
     with contextlib.suppress(KeyboardInterrupt):
         sys.exit(asyncio.run(run(config)))
 

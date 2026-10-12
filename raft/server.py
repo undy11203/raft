@@ -23,7 +23,7 @@ class HttpServer:
         app.add_routes([
             web.post("/raft/request-vote", self.request_vote),
             web.post("/raft/append-entries", self.append_entries),
-            # web.get("/status", self.status),
+            web.get("/status", self.status),
         ])
         self.runner = web.AppRunner(app, access_log=None)
 
@@ -42,8 +42,8 @@ class HttpServer:
         req = await self.read_message(request, AppendEntriesRequest)
         return web.json_response(asdict(self.node.handle_append_entries(req)))
 
-    # async def status(self, request: web.Request) -> web.Response:
-    #     return web.json_response(self.node.status())
+    async def status(self, request: web.Request) -> web.Response:
+        return web.json_response(asdict(self.node.status()))
 
     async def read_message[T](self, request: web.Request, message: Callable[..., T]) -> T:
         try:

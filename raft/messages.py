@@ -34,3 +34,9 @@ class AppendEntriesRequest:
 class AppendEntriesResponse:
     term: int
     success: bool
+
+@dataclass
+class Status:
+    term: int
+    leader_id: int | None
+    role: str
