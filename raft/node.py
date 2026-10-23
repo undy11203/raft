@@ -172,6 +172,7 @@ class Node:
 
     async def send_request_vote(self, peer_id: int, req: RequestVoteRequest) -> None:
         resp = await self.peerClient.request_vote(peer_id, req)
+        log.info("request_vote: %d, %s", peer_id, req)
         if resp is not None:
             self.handle_request_vote_response(peer_id, req, resp)
         else:
@@ -223,6 +224,7 @@ class Node:
                                    leader_commit= 0)
         for peer_id in self.peers:
             self.spawn(self.send_append_entries(peer_id, req))
+        log.info("send heartbeat: %s, %s", self.peers, req)
         self.heartbeat_timer = self.loop.call_later(self.config.heartbeat_interval,
                                                     self.send_heartbeats)
 

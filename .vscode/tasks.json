@@ -1,0 +1,55 @@
+{
+    // Узлы под debugpy --listen; запускаются сами как preLaunchTask конфигураций «Node N» в launch.json.
+    // Задача считается готовой, когда debug_node.py печатает «debugpy: waiting ...».
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "debugpy: node 1",
+            "type": "process",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "-Xfrozen_modules=off", "${workspaceFolder}/.vscode/debug_node.py", "5678",
+                "--id", "1", "--port", "8001", "--peers", "2=127.0.0.1:8002", "3=127.0.0.1:8003"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "debugpy",
+                "pattern": { "regexp": "^__never__$" },
+                "background": { "activeBegins": true, "beginsPattern": "^__never__$", "endsPattern": "^debugpy: waiting" }
+            }
+        },
+        {
+            "label": "debugpy: node 2",
+            "type": "process",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "-Xfrozen_modules=off", "${workspaceFolder}/.vscode/debug_node.py", "5679",
+                "--id", "2", "--port", "8002", "--peers", "1=127.0.0.1:8001", "3=127.0.0.1:8003"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "debugpy",
+                "pattern": { "regexp": "^__never__$" },
+                "background": { "activeBegins": true, "beginsPattern": "^__never__$", "endsPattern": "^debugpy: waiting" }
+            }
+        },
+        {
+            "label": "debugpy: node 3",
+            "type": "process",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "args": [
+                "-Xfrozen_modules=off", "${workspaceFolder}/.vscode/debug_node.py", "5680",
+                "--id", "3", "--port", "8003", "--peers", "1=127.0.0.1:8001", "2=127.0.0.1:8002"
+            ],
+            "options": { "cwd": "${workspaceFolder}" },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "debugpy",
+                "pattern": { "regexp": "^__never__$" },
+                "background": { "activeBegins": true, "beginsPattern": "^__never__$", "endsPattern": "^debugpy: waiting" }
+            }
+        }
+    ]
+}

@@ -9,7 +9,15 @@
             "request": "launch",
             "module": "raft",
             "cwd": "${workspaceFolder}",
-            "args": ["--id", "1", "--port", "8001", "--peers", "2=127.0.0.1:8002", "3=127.0.0.1:8003"],
+            "args": [
+                "--id",
+                "1",
+                "--port",
+                "8001",
+                "--peers",
+                "2=127.0.0.1:8002",
+                "3=127.0.0.1:8003"
+            ],
             "console": "integratedTerminal"
         },
         {
@@ -18,7 +26,15 @@
             "request": "launch",
             "module": "raft",
             "cwd": "${workspaceFolder}",
-            "args": ["--id", "2", "--port", "8002", "--peers", "1=127.0.0.1:8001", "3=127.0.0.1:8003"],
+            "args": [
+                "--id",
+                "2",
+                "--port",
+                "8002",
+                "--peers",
+                "1=127.0.0.1:8001",
+                "3=127.0.0.1:8003"
+            ],
             "console": "integratedTerminal"
         },
         {
@@ -27,7 +43,15 @@
             "request": "launch",
             "module": "raft",
             "cwd": "${workspaceFolder}",
-            "args": ["--id", "3", "--port", "8003", "--peers", "1=127.0.0.1:8001", "2=127.0.0.1:8002"],
+            "args": [
+                "--id",
+                "3",
+                "--port",
+                "8003",
+                "--peers",
+                "1=127.0.0.1:8001",
+                "2=127.0.0.1:8002"
+            ],
             "console": "integratedTerminal"
         },
         {
@@ -44,7 +68,11 @@
             // Три узла сразу, у каждого свой терминал; остановка одного не гасит остальные —
             // так удобно проверять перевыборы после «падения» лидера
             "name": "Cluster (3 nodes)",
-            "configurations": ["Node 1", "Node 2", "Node 3"]
+            "configurations": [
+                "Node 1",
+                "Node 2",
+                "Node 3"
+            ]
         }
     ]
 }

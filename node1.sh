@@ -1,1 +1,1 @@
-python -m raft --id 1 --port 8001 --peers 2=127.0.0.1:8002 3=127.0.0.1:8003
+python -m raft --id 1 --port 8001 --peers 2=127.0.0.1:8002 3=127.0.0.1:8003 --election-timeout 150 300
