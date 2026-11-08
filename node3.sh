@@ -1,1 +1,1 @@
-python -m raft --id 3 --port 8003 --peers 2=127.0.0.1:8002 1=127.0.0.1:8001 --election-timeout 50 150
+RAFT_LOOPTRACE=trace3.json python -m raft --id 3 --port 8003 --peers 2=127.0.0.1:8002 1=127.0.0.1:8001

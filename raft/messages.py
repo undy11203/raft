@@ -1,5 +1,9 @@
 from dataclasses import dataclass
+from enum import StrEnum
 
+# =====
+# RPC
+# =====
 
 @dataclass
 class LogEntry:
@@ -30,13 +34,36 @@ class AppendEntriesRequest:
     entries: list[LogEntry]
     leader_commit: int = 0
 
+    def __post_init__(self):
+        self.entries = [
+            LogEntry(**entry) if isinstance(entry, dict) else entry
+            for entry in self.entries
+        ]
+
 @dataclass
 class AppendEntriesResponse:
     term: int
     success: bool
+
+# =====
+# Rest
+# =====
+
+class StatusCommand(StrEnum):
+    OK = 'ok'
+    NOT_OK = 'not ok'
 
 @dataclass
 class Status:
     term: int
     leader_id: int | None
     role: str
+
+@dataclass
+class AddEntry:
+    command: str
+
+@dataclass
+class AddEntryResponse:
+    status: StatusCommand
+    

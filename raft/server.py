@@ -4,7 +4,7 @@ from typing import Callable
 
 from aiohttp import web
 
-from raft.messages import AppendEntriesRequest, RequestVoteRequest
+from raft.messages import AddEntry, AppendEntriesRequest, RequestVoteRequest
 from raft.node import Node
 
 
@@ -24,6 +24,9 @@ class HttpServer:
             web.post("/raft/request-vote", self.request_vote),
             web.post("/raft/append-entries", self.append_entries),
             web.get("/status", self.status),
+            web.post("/add-entry", self.add_entry),
+            web.get("/show-log", self.show_entry)
+
         ])
         self.runner = web.AppRunner(app, access_log=None)
 
@@ -41,6 +44,13 @@ class HttpServer:
     async def append_entries(self, request: web.Request) -> web.Response:
         req = await self.read_message(request, AppendEntriesRequest)
         return web.json_response(asdict(self.node.handle_append_entries(req)))
+
+    async def add_entry(self, request: web.Request) -> web.Response:
+        req = await self.read_message(request, AddEntry)
+        return web.json_response(asdict(self.node.handle_add_entry(req)))
+
+    async def show_entry(self, request: web.Request) -> web.Response:
+        return web.json_response(self.node.handle_show_entry())
 
     async def status(self, request: web.Request) -> web.Response:
         return web.json_response(asdict(self.node.status()))
